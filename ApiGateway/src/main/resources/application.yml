@@ -1,0 +1,36 @@
+server:
+  port: 8999
+  
+eureka:
+  instance:
+    hostname: localhost
+  
+spring:
+  application:
+    name: ApiGateway
+  cloud:
+    gateway:
+      routes:
+        - id: UserService
+          uri:
+            lb://UserService
+          predicates:
+            - Path=/user/**
+          filters:
+           - name: CircuitBreaker
+             args:
+               name: UserService
+               fallbackuri: forward:/userServiceFallBack
+            
+        - id: ContactsService
+          uri:
+            lb://ContactsService
+          predicates:
+            - Path=/contact/**
+          filters:
+           - name: CircuitBreaker
+             args:
+               name: ContactsService
+               fallbackuri: forward:/contactServiceFallBack
+        
+          
